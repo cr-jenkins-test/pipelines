@@ -31,14 +31,14 @@ def call(Closure body) {
             }
         }
         stage('Test') {
-            testJobs = [
-                'Lint': {
+            // testJobs = [
+                // 'Lint': {
                     altiNode {
                         checkout scm
                         sh 'rm -f Gemfile Gemfile.lock'
                         sh 'rake style'
                     }
-                },
+                // },
                 // 'Unit Tests': {
                 //     altiNode {
                 //         checkout scm
@@ -57,7 +57,7 @@ def call(Closure body) {
                 //         sh 'kitchen test --destroy always'
                 //     }
                 // }
-            ]
+            // ]
             // integrationTests.each { instance ->
             //   testJobs["Integration $instance"] = {
             //         altiNode {
@@ -67,7 +67,7 @@ def call(Closure body) {
             //         }
             //     }
             // }
-            parallel(testJobs)
+            // parallel(testJobs)
         }
         stage('Publish') {
             echo 'TODO Publishing ...'
