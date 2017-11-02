@@ -1,6 +1,6 @@
-def altiPipelineVersion = '4.9.0'
+def call(Closure body) {
+    def altiPipelineVersion = '4.9.0'
 
-def call() {
     podTemplate(label: 'cookbook', imagePullSecrets: ['artifactory-pull'], containers: [
       containerTemplate(name: 'alti-pipeline', image: "altiscale-docker-dev.jfrog.io/alti_pipeline:testing" /* "altiscale-docker-dev.jfrog.io/alti_pipeline:${altiPipelineVersion}" */, alwaysPullImage: false /* true */, command: "/bin/sh -c \"trap 'exit 0' TERM; sleep 2147483647 & wait\""),
     ]) {
@@ -72,6 +72,8 @@ def call() {
         stage('Publish') {
             echo 'TODO Publishing ...'
         }
+
+        body()
 
     }
 }
