@@ -1,8 +1,17 @@
 def call(Closure body) {
     def altiPipelineVersion = '4.9.0'
 
-    podTemplate(label: 'cookbook', imagePullSecrets: ['artifactory-pull'], containers: [
-      containerTemplate(name: 'alti-pipeline', image: "altiscale-docker-dev.jfrog.io/alti_pipeline:testing" /* "altiscale-docker-dev.jfrog.io/alti_pipeline:${altiPipelineVersion}" */, alwaysPullImage: false /* true */, command: "/bin/sh -c \"trap 'exit 0' TERM; sleep 2147483647 & wait\""),
+    def downwardRoot = System.getenv('DOWNWARD_VOLUME') ?: '/etc/downward'
+
+    // Parse the labels test.
+    def labels = [:]
+    new File("$downwardRoot/labels").eachLine {
+      def parts = it.split('=')
+      labels[parts[0]] = parts[1][1..-2]
+    }
+
+    podTemplate(label: 'cookbook', imagePullSecrets: ["${labels['app']}-pull"], containers: [
+      containerTemplate(name: 'alti-pipeline', image: "altiscale-docker-dev.jfrog.io/alti_pipeline:testing" /* "altiscale-docker-dev.jfrog.io/alti_pipeline:${altiPipelineVersion}" */, alwaysPullImage: false, command: "/bin/sh -c \"trap 'exit 0' TERM; sleep 2147483647 & wait\""),
     ]) {
         // stage('Wat') {
         //     withCredentials([string(credentialsId: 'artifactory-jenkins-dev', variable: 'ARTIFACTORY_API_KEY')]) {
